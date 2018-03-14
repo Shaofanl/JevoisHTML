@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title> Demo-APP </title>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+            integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+            crossorigin="anonymous"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="/static/webcam.min.js"></script>
+
+    <script language="JavaScript">
+      var cam_width=320, cam_height=240, out_width=320, out_height=240;
+      var hflip=false, dbldisplay=false;
+
+      $(document).ready(function() {
+        reload_jevois();
+        refresh_info();
+        refresh_mappings();
+
+        $('#jevois-cmd').keyup(function(event) {
+          event.preventDefault();
+          if (event.keyCode === 13) {
+            $('#jevois-cmd-submit').click();
+          }
+        });
+
+        var append_log = function(log) {
+          var console = $('#jevois-log');
+          console.val(console.val()+log);
+          if(console.length)
+            console.scrollTop(console[0].scrollHeight - console.height());
+        };
+
+        $('#jevois-cmd-clear').click(function() {
+          $("#jevois-log").val("");
+          $("#jevois-cmd").val("");
+        });
+
+        $('#jevois-cmd-submit').click(function() {
+          var command = $("#jevois-cmd").val();
+          append_log('INPUT:\n\t'+command+'\nOUTPUT:\n\t');
+          $('#jevois-cmd').val('');
+          $.ajax({
+            url: 'jevois_cmd',
+            data: {'cmd': command},
+            dataType: "json",
+            method: "POST",
+            success: function(result) {
+              append_log(result.res);
+              append_log("===========================================\n");
+            },
+            error: function() {
+              append_log("Execution failed.\n");
+              append_log("===========================================\n");
+            }
+          });
+
+        });
+
+      });
+
+      var reload_jevois = function() {
+        Webcam.reset();
+        Webcam.set({
+          width: dbldisplay?out_width*2:out_width,
+          height: dbldisplay?out_height*2:out_height,
+          dest_width: cam_width,
+          dest_height: cam_height,
+          flip_horiz: hflip,
+          constraints: { width: cam_width, height: cam_height}
+        });
+        Webcam.attach('#player');
+      }
+
+      var update_videomapping = function() {
+        var params = $("#videomapping")[0].value.split(' ')[4].split('x');
+        cam_width = parseInt(params[0]);
+        cam_height = parseInt(params[1]);
+        var params = $("#videomapping")[0].value.split(' ')[4].split('x');
+        out_width = parseInt(params[0]);
+        out_height = parseInt(params[1]);
+
+        reload_jevois();
+        refresh_info();
+      }
+      
+      var refresh_mappings = function() {
+        $.ajax({
+          url: 'jevois_mappings',
+          beforeSend: function() { $('#videomapping').html('loading...'); },
+          success: function(result) { $('#videomapping').html(result); }
+        });
+      }
+
+      var refresh_info = function() {
+        $.ajax({
+          url: 'jevois_info',
+          beforeSend: function() { $('#jevois-info').html('loading...'); },
+          success: function(result) { $('#jevois-info').html(result); }
+        });
+      }
+
+      var update_dbldisplay = function() {
+        dbldisplay = $('#dbldisplay')[0].checked;
+        reload_jevois();
+      }
+
+      var update_hflip = function() {
+        hflip = $('#hflip')[0].checked;
+        reload_jevois();
+      }
+
+    </script>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-10 col-lg-offset-1">
+
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title"> Jevois Info </h3>
+            </div>
+            <div class="panel-body">
+              <textarea id="jevois-info" rows=7 style="width:100%" class="form-control" readonly></textarea>
+              <br/>
+              <button class="btn btn-success" onclick="refresh_info()">Refresh</button>
+            </div>
+          </div>
+
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title"> Jevois Live </h3>
+            </div>
+            <div class="panel-body">
+              <input type="checkbox" id="hflip" onchange="update_hflip()"> Horizontal Flip
+              <input type="checkbox" id="dbldisplay" onchange="update_dbldisplay()"> 2x Display 
+	            <div id="player"></div>
+            </div>
+          </div>
+
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title"> Video Mappings (beta)</h3>
+            </div>
+            <div class="panel-body">
+              <select class="form-control" id="videomapping" onchange="update_videomapping()">
+                <option>Loading failed</option>
+              </select>
+              <button class="btn btn-success" onclick="refresh_mappings()">Refresh</button>
+            </div>
+          </div>
+
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title"> Jevois CMD </h3>
+            </div>
+            <div class="panel-body">
+              <div class="form-inline">
+                <div class="form-group">
+                  <input type="text" id="jevois-cmd" class="form-control" style="width:100%">
+                </div>
+                <div class="form-group">
+                  <button type="button" class="btn btn-success" id="jevois-cmd-submit">Execute</button>
+                  <button type="button" class="btn btn-danger" id="jevois-cmd-clear">Clear</button>
+                </div>
+              </div>
+              <textarea id="jevois-log" class="form-control" rows=10 style="width:100%" readonly></textarea>
+            </div>
+          </div>
+
+          <div class="panel panel-danger">
+            <div class="panel-heading">
+              <h3 class="panel-title"> Notice</h3>
+            </div>
+            <div class="panel-body">
+              <ul>
+                <li>Must run `run.py` with `sudo`. Otherwise, it cannot execute `jevois-cmd`.</li>
+                <li>Deploy this server with `sudo` on the Internet might have security issues.</li>
+                <li>Change `setmapping` in `CMD` will not override the camera resolution.</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>  <!-- col-md -->
+      </div> <!-- row -->
+
+    </div> <!-- container -->
+  </body>
+
+</html>

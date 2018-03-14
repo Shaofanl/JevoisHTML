@@ -1,0 +1,24 @@
+#!/bin/bash
+# USAGE: jevois-cmd [-d /dev/ttyACMX] command
+#
+# Send a command to a connected JeVois camera using the serial-over-USB port
+#
+# Tip: If things appear garbled in some way, maybe your TTY settings got messed up. Run screen /dev/ttyACM0 115200 to
+# reset to th eexpected state.
+
+ttydev="/dev/ttyACM0"
+if [ "X$1" = "X-d" ]; then ttydev=$2; shift 2; fi 
+
+if [ ! -c "$ttydev" ]; then echo "Cannot access $ttydev -- is JeVois plugged in? -- ABORT"; exit 1; fi
+
+# First read any accumulated junk in the serial buffers:
+while true; do
+    sudo bash -c "read -s -t 0.05 -s < \"${ttydev}\""
+    if [ $? -ne 0 ]; then break; fi
+done
+
+# Send the command:
+sudo bash -c "echo \"$*\" > ${ttydev}"
+
+# Get the reply, which may have multiple lines:
+sudo timeout 0.5 cat ${ttydev}
