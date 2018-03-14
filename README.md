@@ -28,4 +28,5 @@ Possible extensions
 - Build Jevois application with HTML5:
   - Jevois outputs information with `jevois.sendSerial`.
   - Python receives information with `serial.Serial` with [pySerial](http://pythonhosted.org/pyserial/)
-  - HTML fetches from Python server with AJAX.
+  - (Check [this video](https://www.youtube.com/watch?v=TlFrDv5FJo0) to see how I connect Jevois with a neural network to compose.)
+  - HTML fetches information from Python server with AJAX.
