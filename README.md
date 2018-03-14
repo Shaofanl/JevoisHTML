@@ -18,8 +18,11 @@ Advanced usage:
 - Broadcast your Jevois to the world:
   - Deploy the server on `0.0.0.0` port. (`sudo FLASK_APP=run.py flask run --host 0.0.0.0 --port 12345`).
 
-Future work:
-- Build Jevois application with HTML5
+Start from here:
+- More controls via HTML components:
+  - Other commands in `jevois-cmd` can also be built with HTML components (e.g. `setpar`, `getpar`, `setcam`, `getcam`).
+  - We can parse all options from `jevois-cmd help` and visualize them as HTML component. I already built a selector for `videomapping`.
+- Build Jevois application with HTML5:
   - Jevois outputs information with `jevois.sendSerial`.
   - Python receives information with `serial.Serial` with [pySerial](http://pythonhosted.org/pyserial/)
   - HTML fetches from Python server with AJAX.
