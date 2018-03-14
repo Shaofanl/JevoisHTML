@@ -17,3 +17,9 @@ Usage:
 Advanced usage:
 - Broadcast your Jevois to the world:
   - Deploy the server on `0.0.0.0` port. (`sudo FLASK_APP=run.py flask run --host 0.0.0.0 --port 12345`).
+
+Future work:
+- Build Jevois application with HTML5
+  - Jevois outputs information with `jevois.sendSerial`.
+  - Python receives information with `serial.Serial` with [pySerial](http://pythonhosted.org/pyserial/)
+  - HTML fetches from Python server with AJAX.
