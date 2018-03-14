@@ -1,24 +1,27 @@
 Jevois HTML Interface
 ===
 
-A HTML-based Jevois Interface 
+A HTML-based Jevois interface that helps the users/developers better streaming Jevois and controling it.
 
-Requirements:
+Requirements
+---
 - Jevois.
 - Python.
 - Flask. Install with `pip install flask`.
 
-Usage:
+Usage
+---
 - Connect Jevois.
 - Run `run.py` with administrative permission (`sudo python run.py` or `sudo FLASK_APP=run.py flask run`).
 - Open your browser and access the url shown in the console (`127.0.0.1:5000` by default).
 
-
-Advanced usage:
+Advanced usage
+---
 - Broadcast your Jevois to the world:
   - Deploy the server on `0.0.0.0` port. (`sudo FLASK_APP=run.py flask run --host 0.0.0.0 --port 12345`).
 
-Start from here:
+Possible extensions
+---
 - More controls via HTML components:
   - Other commands in `jevois-cmd` can also be built with HTML components (e.g. `setpar`, `getpar`, `setcam`, `getcam`).
   - We can parse all options from `jevois-cmd help` and visualize them as HTML component. I already built a selector for `videomapping`.
