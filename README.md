@@ -11,7 +11,7 @@ Requirements:
 Usage:
 - Connect Jevois.
 - Run `run.py` with administrative permission (`sudo python run.py` or `sudo FLASK_APP=run.py flask run`).
-- Open your browser and access the url shown in the console.
+- Open your browser and access the url shown in the console (`127.0.0.1:5000` by default).
 
 
 Advantage usage:
