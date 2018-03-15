@@ -1,7 +1,11 @@
 Jevois HTML Interface
 ===
 
-A HTML-based Jevois interface that helps the users/developers better streaming Jevois and controling it.
+A HTML-based Jevois interface that helps the users/developers better streaming Jevois and controling it. Currently, it alsow the user to
+- Stream Jevois on a webpage.
+- Get the information of Jevois.
+- Select the videomapping easily with a dropdown selector.
+- Execute commands and check the return message easily.
 
 Requirements
 ---
